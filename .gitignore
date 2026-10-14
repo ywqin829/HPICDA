@@ -1,0 +1,33 @@
+# data (distributed via Zenodo, not tracked here)
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# large intermediates / data
+*.csv
+*.npz
+*.npy
+*.gz
+*.zip
+*.rds
+*.h5ad
+*.log
+
+# analysis data directories (unpacked from the Zenodo archive)
+03_functional_screens/raw/
+05_conditional_dependency/per_screen_calls.tsv
+05_conditional_dependency/per_screen_calls_v2.tsv
+09_transcriptomic_context/raw/
+18_checkpoints/
+19_logs/
+
+# figure output
+25_manuscript_package/figures/*.pdf
+Rplots.pdf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.Rhistory
+.Rproj.user/

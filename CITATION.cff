@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the manuscript and the Zenodo archives below."
+title: "HPICDA — Human Pulmonary Infection Conditional Dependency Atlas (analysis code)"
+abstract: >-
+  Analysis code for a baseline-fitness-aware re-analysis of 39 CRISPR
+  loss-of-function screens of human respiratory infection and an independent
+  holdout adjudication of the candidate set it produces.
+type: software
+authors:
+  - family-names: "Qin"
+    given-names: "Yongwei"
+    email: "yw_qin@ntu.edu.cn"
+# Uncomment and fill once the manuscript is published:
+# preferred-citation:
+#   type: article
+#   title: "…"
+#   authors:
+#     - family-names: "Qin"
+#       given-names: "Yongwei"
+#   journal: "mSphere"
+#   year: 2026
+repository-code: "https://github.com/ywqin829/HPICDA"
+# Software DOI: mint via Zenodo's GitHub integration (authorise ywqin829/HPICDA
+# once, then create a GitHub Release). Left unset here so no DOI is fabricated.
+references:
+  - type: dataset
+    authors:
+      - family-names: "Qin"
+        given-names: "Yongwei"
+    title: "HPICDA — Human Pulmonary Infection Conditional Dependency Atlas: supplementary tables (S1–S20b)"
+    doi: "10.5281/zenodo.23357807"
+    year: 2026
+keywords:
+  - CRISPR screen
+  - host-pathogen interaction
+  - respiratory infection
+  - dependency map
+  - reproducibility
+license: MIT

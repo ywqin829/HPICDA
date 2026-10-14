@@ -1,0 +1,351 @@
+# HPICDA PIPELINE_INDEX — 权威执行索引(2026-09-05 归一化)
+# 用途:替代早期 run_pipeline.py 骨架,诚实记录 48 个脚本的真实执行顺序、
+#       输入/输出、检查点、门控依赖与可重跑性。
+# 重要事实:
+#   - 全流程从未做过端到端无人值守重跑;各阶段在沙箱中按序执行并经检查点锁定。
+#   - rerunnable: "yes"   = 输入在包内且脚本可独立重跑
+#                 fetch = 需先运行 03_functional_screens/raw/fetch_raw_data.sh 取回外部数据
+#                 manual= 含人工门控/交互修订/外部 staging,重跑需人工介入
+#   - 检查点记录的是 脚本/输入/输出 的 SHA256(18_checkpoints/<stage_id>.json)。
+#   - R7/R8/R10 检查点未记录脚本哈希(早期版本),脚本归属依据执行笔记本与 runinfo。
+
+phases:
+  - id: main
+    label: 主体管线 Stage 0–12(2026-08-29 → 09-01)
+  - id: revision
+    label: 修订分析 R1–R14(Plan v2/v3)
+  - id: governance
+    label: 治理(HG0–HG4 门控,批准件在 18_human_reviews/)
+  - id: post_hg4
+    label: HG4 解锁后 Stage 13/14/15(2026-09-02/03)
+  - id: expert_review
+    label: 专家 20 条意见闭环补充(2026-09-04)
+  - id: closing
+    label: 收尾三项 + 复现包审计(2026-09-04/05)
+
+stages:
+  # ---------- 主体管线 ----------
+  - stage_id: stage0_census
+    script: scripts/01_screen_census.py
+    phase: main
+    gate: null
+    checkpoint: null   # Stage 0 早于检查点框架;清单见 SHA256SUMS.txt(历史)
+    rerunnable: "fetch"  # 需 ORCS tarball 索引(仅索引,用后已删)
+    note: 91 屏→53 合格;Legionella 防火墙
+  - stage_id: stage0_manifest
+    script: scripts/01c_build_manifest.py
+    phase: main
+    gate: HG0
+    checkpoint: null
+    rerunnable: "manual"
+  - stage_id: stage0_independence
+    script: scripts/01d_independence_estimand.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "yes"
+  - stage_id: stage1
+    script: scripts/02_build_ontology.py
+    phase: main
+    gate: null
+    checkpoint: stage1
+    rerunnable: "yes"
+  - stage_id: stage1b_estimand_registry
+    script: scripts/02b_build_estimand_registry.py
+    phase: main
+    gate: HG1   # 终点方向语义人工确认
+    checkpoint: null
+    rerunnable: "yes"
+  - stage_id: stage2_parse
+    script: scripts/03_parse_count_matrix.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"  # 需 GEO 原始文件(包内 raw/)与 ORCS TrackB
+  - stage_id: stage2_rsv_sra
+    script: scripts/04_download_rsv_sra.sh
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"  # PRJNA1281304 prefetch(8.9G reads,不打包)
+  - stage_id: stage2_gse178699
+    script: scripts/05_run_gse178699.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_gse111166
+    script: scripts/06_merge_gse111166.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_rsv_count
+    script: scripts/07_count_rsv.sh
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_li2020
+    script: scripts/08_run_li2020.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_xlsx
+    script: scripts/09_xlsx_stream.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_gse175666
+    script: scripts/10_run_gse175666.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2_trackB
+    script: scripts/11_fetch_orcs_trackB.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "fetch"
+  - stage_id: stage2
+    script: scripts/12_finalize_stage2.py
+    phase: main
+    gate: HG2   # 独立性/共享对照确认
+    checkpoint: stage2   # 46 个输出
+    rerunnable: "manual"
+    note: registry_amendments.tsv 为合法修订日志(检查点后仍有追加,漂移已解释)
+  - stage_id: stage3_qc
+    script: scripts/13_stage3_qc.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "yes"
+  - stage_id: stage3
+    script: scripts/14_stage3_reports.py
+    phase: main
+    gate: null
+    checkpoint: stage3   # 19 个输出
+    rerunnable: "yes"
+  - stage_id: stage4
+    script: scripts/15_stage4_depmap_freeze.py
+    phase: main
+    gate: null
+    checkpoint: stage4
+    rerunnable: "yes"   # 输入 gene_effect_26Q1.csv 已打包(04_depmap_baseline/)
+  - stage_id: stage5
+    script: scripts/16_stage5_conditional_calls.py
+    phase: main
+    gate: null
+    checkpoint: stage5
+    rerunnable: "yes"
+  - stage_id: stage5_finalize
+    script: scripts/17_stage5_finalize.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "yes"
+  - stage_id: stage6
+    script: scripts/18_stage6_7_replication_convergence.py
+    phase: main
+    gate: null
+    checkpoint: stage6
+    rerunnable: "yes"
+  - stage_id: stage7
+    script: scripts/18_stage6_7_replication_convergence.py
+    phase: main
+    gate: null
+    checkpoint: stage7
+    rerunnable: "yes"
+    note: 同一脚本两段执行;置换空分布 convergence_v2_null.npz(1.5G)已打包
+  - stage_id: freeze_candidates
+    script: scripts/24_freeze_candidate_set.py
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "yes"
+    note: 353 预注册候选集 v1(Stage 8 前冻结,防泄漏)
+  - stage_id: stage8
+    script: scripts/25_stage8_expression_concordance.py
+    phase: main
+    gate: null
+    checkpoint: "8"
+    rerunnable: "yes"
+  - stage_id: stage9
+    script: scripts/26_stage9_hlca_expression.py
+    phase: main
+    gate: null
+    checkpoint: "9"
+    rerunnable: "yes"
+  - stage_id: stage10
+    script: scripts/27_stage10_human_genetics.py
+    phase: main
+    gate: null   # genetics_rules.yaml 先于本阶段冻结(config: genetics_rules_frozen)
+    checkpoint: "10"
+    rerunnable: "yes"
+  - stage_id: stage11
+    script: scripts/28_stage11_modules_contradictions.py
+    phase: main
+    gate: null
+    checkpoint: "11"
+    rerunnable: "yes"
+  - stage_id: stage12
+    script: scripts/30_stage12_candidate_freeze.py
+    phase: main
+    gate: HG3   # 生物候选冻结
+    checkpoint: "12"
+    rerunnable: "manual"
+    note: 冻结 v1 SHA256 5fbe626f…;检查点内 5 个相对路径为历史记录
+  - stage_id: figures_overview
+    script: scripts/31_overview_figures.R
+    phase: main
+    gate: null
+    checkpoint: null
+    rerunnable: "yes"
+
+  # ---------- 修订 R1–R14 ----------
+  - stage_id: R1
+    script: scripts/19_r1_gene_universe_audit.py
+    phase: revision
+    checkpoint: R1
+    rerunnable: "yes"
+  - stage_id: R2
+    script: scripts/20_r2_unavailable_fix.py
+    phase: revision
+    checkpoint: R2
+    rerunnable: "yes"
+  - stage_id: R3
+    script: scripts/21_r3_replication_tiers.py
+    phase: revision
+    checkpoint: R3
+    rerunnable: "yes"
+  - stage_id: R4
+    script: scripts/22_r4_convergence_v2.py
+    phase: revision
+    checkpoint: R4
+    rerunnable: "yes"
+  - stage_id: R4b_module_gate
+    script: scripts/22b_r4_module_gate.py
+    phase: revision
+    checkpoint: null
+    rerunnable: "yes"
+  - stage_id: R7
+    script: null   # 检查点未记录脚本;笔记本驱动(DepMap 26Q1 重冻结验证)
+    phase: revision
+    checkpoint: R7
+    rerunnable: "manual"
+  - stage_id: R8
+    script: null   # 检查点未记录脚本;human_layer_rules.yaml 更新(合法漂移)
+    phase: revision
+    checkpoint: R8
+    rerunnable: "manual"
+  - stage_id: R9
+    script: scripts/34_r9_mock_interaction.py
+    phase: revision
+    checkpoint: R9
+    rerunnable: "yes"
+  - stage_id: R10
+    script: scripts/32_r10_g2_restratify.py + scripts/33_r10_rescore_v2.py
+    phase: revision
+    gate: HG3_amendment   # 细则 v2 先冻结(eac00750…)后运行
+    checkpoint: R10
+    rerunnable: "manual"
+  - stage_id: R11
+    script: scripts/35_r11_orcs_frequent_hitter.py
+    phase: revision
+    checkpoint: R11
+    rerunnable: "yes"
+  - stage_id: R12
+    script: scripts/36_r12_tolerability_axis.py
+    phase: revision
+    checkpoint: R12
+    rerunnable: "yes"
+  - stage_id: R13
+    script: scripts/38_r13_crisprcleanr.R + scripts/39_r13_overlay.py
+    phase: revision
+    checkpoint: R13
+    rerunnable: "yes"
+  - stage_id: R14
+    script: scripts/37_r14_diagnostics.py
+    phase: revision
+    checkpoint: R14
+    rerunnable: "yes"
+  - stage_id: stage12_v2
+    script: scripts/30b_stage12_candidate_freeze_v2.py
+    phase: governance
+    gate: HG3_amendment
+    checkpoint: null
+    rerunnable: "manual"
+    note: 冻结 v2 SHA256 1c00f7cc…;HG4 解锁包同批批准
+
+  # ---------- HG4 解锁后 ----------
+  - stage_id: stage13_holdout_adjudication
+    script: scripts/40_stage13_holdout_adjudication.py
+    phase: post_hg4
+    gate: HG4
+    checkpoint: stage13_holdout_adjudication
+    rerunnable: "yes"
+  - stage_id: stage14_druggability
+    script: scripts/41_stage14_druggability.py
+    phase: post_hg4
+    checkpoint: stage14_druggability
+    rerunnable: "yes"
+    note: 2026-09-03 工作区输出曾被失败重跑污染,已从面板正确版恢复(见 hash_audit_report)
+  - stage_id: stage15_pareto
+    script: scripts/42_stage15_pareto.py
+    phase: post_hg4
+    checkpoint: stage15_pareto
+    rerunnable: "yes"
+
+  # ---------- 专家意见闭环 ----------
+  - stage_id: hg3_sensitivity_nodepmap
+    script: scripts/43_hg3_sensitivity_without_depmap.py
+    phase: expert_review
+    checkpoint: hg3_sensitivity_nodepmap
+    rerunnable: "yes"
+  - stage_id: stage13_topk_enrichment
+    script: scripts/44_stage13_topk_enrichment.py
+    phase: expert_review
+    checkpoint: stage13_topk_enrichment
+    rerunnable: "yes"
+  - stage_id: freeze_v2_annotation
+    script: scripts/45_freeze_annotation_addon.py
+    phase: expert_review
+    checkpoint: freeze_v2_annotation
+    rerunnable: "yes"
+    note: 派生标注;冻结件本身未动(断言校验)
+
+  # ---------- 收尾 ----------
+  - stage_id: stage15_weight_sensitivity
+    script: scripts/46_stage15_weight_sensitivity.py
+    phase: closing
+    checkpoint: stage15_weight_sensitivity
+    rerunnable: "yes"
+  - stage_id: stage14_launched_curation
+    script: scripts/47_stage14_launched_curation.py
+    phase: closing
+    checkpoint: stage14_launched_curation
+    rerunnable: "yes"
+    note: 机器初筛,转化声明前需人工签字
+  - stage_id: stage13b_sc2_03
+    script: scripts/48_stage13b_sc2_03_adjudication.py
+    phase: closing
+    checkpoint: stage13b_sc2_03
+    rerunnable: "yes"
+    note: 作者基因级结果(与 ORCS 同标准);计数矩阵存档于 23_holdout_sc2_03_stahl/
+  - stage_id: master_hash_audit
+    script: scripts/49_master_hash_audit.py
+    phase: closing
+    checkpoint: master_hash_audit
+    rerunnable: "yes"
+    note: 复现包归一化审计(2026-09-05)
+
+gates:
+  HG0: {file: 18_human_reviews/HG0.approved, approved: "2026-08-29", scope: Stage 0 可行性(GO_ASYMMETRIC_CROSS_CLASS)}
+  HG1: {file: 18_human_reviews/HG1.approved, approved: "2026-08-30", scope: 终点方向语义}
+  HG2: {file: 18_human_reviews/HG2.approved, approved: "2026-08-30", scope: 独立性/共享对照}
+  HG3: {file: 18_human_reviews/HG3.approved, approved: "2026-08-31", scope: 生物候选冻结 v1}
+  HG3_amendment: {file: 18_human_reviews/HG3_AMENDMENT_v2.approved, approved: "2026-09-02", scope: 细则 v2 + 重冻结 v2, 委托代理批准(可回滚,待用户正式复核)}
+  HG4: {file: 18_human_reviews/HG4.approved, approved: "2026-09-02", scope: 留存解锁, 委托代理批准(可回滚,待用户正式复核)}
