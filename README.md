@@ -7,13 +7,15 @@ produces.
 
 The manuscript's central results are:
 
-1. The composite (HG3) score does not validate: at chance as a predictor of
-   independent holdout validation on the frozen pre-registered layer
-   (gene-level AUROC 0.524) and below chance on the SC2-03-inclusive layer
-   (0.447), while a plain count of the pathogens in which a gene recurred
-   reaches 0.686 on the frozen layer.
-2. Cellular context, not intervention direction, is the pair-level determinant
-   of replication (context-matched pair, OR 2.58, 95% CI 1.11–6.02).
+1. Same-pathogen replication is low (55 of 654 evaluable gene × holdout pairs,
+   8.4%), and the frozen HG3 composite is at chance as a global predictor of
+   independent validation on the pre-registered layer (gene-level AUROC 0.524)
+   and below chance on the SC2-03-inclusive layer (0.447).
+2. An unweighted pathogen count initially reached AUROC 0.686, but this
+   advantage was not robust after 5,000 equal-opportunity resamples. The number
+   or frequency of independent discovery units hit retained a positive paired
+   advantage over HG3, whereas pathogen breadth did not. Cellular context is
+   exploratory because it cannot be separated from holdout identity.
 3. An estimand-aware reconciliation of the screens into 852,216 gene × screen
    calls, separated into conditional dependency, baseline-fitness confounding
    and signal-state alteration, with a prospectively frozen set of 353
@@ -25,7 +27,7 @@ distributed separately (see below).
 ## Repository contents
 
 ```
-scripts/       analysis pipeline, 01–60 (Python, plus 2 R QC/overlay scripts)
+scripts/       analysis pipeline, 01–64 (Python, plus 2 R QC/overlay scripts)
 R/             publication figure scripts (7 figures + shared theme)
 runner/        checkpoint / pipeline driver (run_pipeline.py, PIPELINE_INDEX.yaml)
 environment_lock.txt   pinned environment
@@ -33,12 +35,15 @@ environment_lock.txt   pinned environment
 
 ## Data
 
-The manuscript's supplementary tables (S1–S20b) are archived on Zenodo:
+The manuscript's supplementary tables and complete revision analyses are
+archived on Zenodo:
 
 > **Zenodo data archive:** DOI [`10.5281/zenodo.23357807`](https://doi.org/10.5281/zenodo.23357807)
 
-The archive contains `tables/` — 34 TSV files (S1–S20b) plus `TABLES_INDEX.md`
-and `TABLES_INDEX.json`.
+The archive contains `tables/` — the complete source tables S1–S21b, including
+the full `S5_per_screen_calls.tsv.gz`, plus `TABLES_INDEX.md` and
+`TABLES_INDEX.json`. `revision_analyses/` contains the opportunity-adjusted and
+equal-opportunity benchmark outputs.
 
 The pipeline's intermediate data are **not** bundled, here or on Zenodo: the
 CRISPR screens (GEO), the DepMap 26Q1 release and the pharmacological resources
@@ -79,6 +84,11 @@ cd <repository root>
 Rscript R/fig1_study_architecture.R
 # … fig2_landscape.R … fig7_holdout.R
 ```
+
+The revision-stage analysis and packaging scripts are
+`scripts/61_opportunity_balanced_benchmark.py` through
+`scripts/64_build_combined_submission_pdf.py`. They use the same
+`HPICDA_ROOT` convention as the rest of the pipeline.
 
 Figure scripts write PDFs to `25_manuscript_package/figures/`. Run them from the
 repository root (the shared theme is sourced as `R/hpicda_theme.R`).

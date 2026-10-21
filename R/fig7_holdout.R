@@ -1,13 +1,14 @@
-# Figure 7 — Independent holdout adjudication and honest benchmarking
-## Shared figure theme (defines ROOT, the warm palette, PT() and save_pub()).
-## Run from the repository root, or set HPICDA_ROOT first (see README).
+# Figure 7 — Independent holdout adjudication and opportunity-balanced
+# benchmarking. Shared paths, palette and export helpers come from the theme.
 source("R/hpicda_theme.R")
 
 topk <- fread(file.path(ROOT, "20_stage13_holdout_adjudication/stage13_topk_enrichment.tsv"))
 bench <- fread(file.path(ROOT, "24_closing_analyses/benchmark_two_layer.tsv"))
-ctxd <- fread(file.path(ROOT, "24_closing_analyses/context_determinants_stratified.tsv"))
+opp <- fread(file.path(ROOT, "25_manuscript_package/tables/S21b_equal_opportunity_summary.tsv"))
+NUMCOLS <- c("median", "ci_lo", "ci_hi", "n", "fraction_at_or_below_zero")
+opp[, (NUMCOLS) := lapply(.SD, as.numeric), .SDcols = NUMCOLS]
 
-## ------------------------------------------- (a) PASS rate across strata (forest)
+## ------------------------------------------- (a) PASS rate across strata
 STR <- rbindlist(list(
   data.table(grp = "Overall (same-pathogen)", n = 654, k = 55),
   data.table(grp = "Bio-Tier 2",             n = 29,  k = 9),
@@ -41,9 +42,8 @@ pa <- ggplot(STR, aes(p, grp)) +
   theme(axis.text.y = element_text(size = 6.9),
         plot.margin = margin(5.5, 3, 5.5, 2))
 
-## ------------------------------------------------- (b) top-K enrichment of PASS
+## ------------------------------------------------- (b) top-K enrichment
 topk[, K := factor(K, levels = K)]
-PEAK <- topk[which.max(odds_ratio)]
 pb <- ggplot(topk, aes(K, odds_ratio)) +
   geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.35, colour = HP$muted) +
   geom_col(aes(fill = gene_recall_topk), width = 0.5) +
@@ -53,15 +53,11 @@ pb <- ggplot(topk, aes(K, odds_ratio)) +
   scale_fill_gradientn(colours = HP$seq_warm, limits = c(0, 0.8), guide = "none") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.46))) +
   labs(x = "Top-K of the frozen ranking", y = "PASS enrichment (odds ratio)",
-       title = "Enrichment is confined to the top decile") +
+       title = "Top-rank enrichment is limited and imprecise") +
   theme_hp() +
   theme(plot.margin = margin(5.5, 3, 5.5, 2))
 
-## ---------------------------------------- (c) benchmark against naive rankings
-## Bars are the frozen, pre-registered layer (the primary analysis); the hollow
-## marker is the SC2-03-inclusive layer.  A single-layer panel would carry only
-## the supplementary-inclusive AUROCs, which is where the composite looks
-## anti-predictive -- on the frozen layer it is merely at chance.
+## ---------------------------------------- (c) two-layer ranking benchmark
 NICE <- c(HPICDA_HG3_total_score = "HPICDA HG3 score",
           hit_frequency = "Hit frequency",
           n_units_hit = "n units hit",
@@ -90,29 +86,37 @@ bc <- ggplot(bench, aes(auroc_frozen, lab)) +
         legend.margin = margin(t = -1.5, b = -1.5),
         plot.margin = margin(5.5, 3, 5.5, 2))
 
-## ---------------------------------------------- (d) context determinants of PASS
-ctxd[, ctx := factor(ifelse(cm == 1, "Context-matched", "Context-mismatched"),
-                     levels = c("Context-mismatched", "Context-matched"))]
-ctxd[, dir := factor(ifelse(direction == "INHIBIT", "Inhibit", "Preserve / activate"),
-                     levels = c("Inhibit", "Preserve / activate"))]
-pd <- ggplot(ctxd, aes(ctx, pass_rate, fill = dir)) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.62,
-           colour = "white", linewidth = 0.25) +
-  geom_text(aes(label = sprintf("%.0f%%\n(%d/%d)", pass_rate * 100, n_pass, n_eval)),
-            position = position_dodge(width = 0.7), vjust = -0.28, size = PT(6.6),
-            colour = HP$ink, lineheight = 1.1) +
-  scale_fill_manual(values = c(Inhibit = HP$state, `Preserve / activate` = HP$exploited),
-                    name = NULL) +
-  scale_y_continuous(limits = c(0, 0.9), expand = c(0, 0)) +
-  labs(x = NULL, y = "Holdout PASS rate",
-       title = "Matched context + activation direction") +
+## -------------------------- (d) equal-opportunity paired AUROC differences
+opp_d <- opp[section == "paired_difference_vs_HG3"]
+setnames(opp_d, "metric", "comparison")
+COMP_LABELS <- c(
+  n_pathogens_hit_minus_HG3 = "Pathogen breadth",
+  n_units_hit_minus_HG3 = "Independent units hit",
+  hit_frequency_minus_HG3 = "Hit frequency")
+opp_d[, comparison_label := factor(
+  unname(COMP_LABELS[as.character(comparison)]),
+  levels = c("Pathogen breadth", "Independent units hit", "Hit frequency"))]
+opp_d[, robust := fraction_at_or_below_zero < 0.025]
+opp_d[, ypos := match(comparison_label, c("Pathogen breadth", "Independent units hit", "Hit frequency"))]
+pd <- ggplot(opp_d, aes(median, ypos, colour = robust)) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.35, colour = HP$muted) +
+  geom_segment(aes(x = ci_lo, xend = ci_hi, y = ypos, yend = ypos), linewidth = 0.45) +
+  geom_point(size = 1.8) +
+  geom_text(aes(label = sprintf("%+.3f [%.3f, %.3f]", median, ci_lo, ci_hi)),
+            vjust = -0.9, size = PT(6.6), colour = HP$ink) +
+  scale_colour_manual(values = c(`FALSE` = HP$confounded, `TRUE` = HP$exploited),
+                      guide = "none") +
+  scale_x_continuous(limits = c(-0.07, 0.23),
+                     breaks = seq(-0.05, 0.20, by = 0.05)) +
+  scale_y_continuous(breaks = 1:3,
+                     labels = c("Pathogen breadth", "Independent units hit", "Hit frequency"),
+                     limits = c(0.75, 3.35)) +
+  labs(x = "Paired AUROC difference versus HG3", y = NULL,
+       title = "Opportunity-balanced comparison") +
   theme_hp() +
-  theme(axis.text.x = element_text(size = 7.0),
-        legend.position = "bottom", legend.key.size = unit(3.0, "mm"),
-        legend.text = element_text(size = 6.8),
+  theme(axis.text.y = element_text(size = 7.0),
         plot.margin = margin(5.5, 3, 5.5, 2))
 
-## ------------------------------------------------------------------- compose
 fig <- (pa | pb) / (bc | pd) +
   plot_layout(heights = c(1.0, 0.80)) +
   plot_annotation(tag_levels = "A") &
