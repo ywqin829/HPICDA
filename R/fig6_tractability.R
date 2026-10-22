@@ -3,7 +3,6 @@
 source("R/hpicda_theme.R")
 
 ax <- fread(file.path(ROOT, "21_stage14_druggability/stage14_druggability_axis.tsv"))
-cur <- fread(file.path(ROOT, "21_stage14_druggability/stage14_launched_curation.tsv"))
 
 ## ------------------------------------------------- (a) baseline-fitness plane
 ## The x axis is DepMap baseline fitness, not a measured therapeutic window: the
@@ -75,52 +74,10 @@ pb <- ggplot(pb_dt, aes(N, dir, fill = dcls)) +
         legend.text = element_text(size = 6.6), legend.spacing.y = unit(0.2, "mm"),
         plot.margin = margin(5.5, 3, 5.5, 2))
 
-## ----------------------------------------- (c) launched-compound curation audit
-CLS <- c(direct_target = "Direct target",
-         direct_secondary = "Direct, secondary MOA",
-         indirect_pathway = "Indirect / pathway-adjacent",
-         endogenous_ligand = "Endogenous ligand",
-         likely_misannotation = "Likely misannotation")
-cur[, cls := factor(CLS[curation_class], levels = unname(CLS))]
-cc <- cur[, .N, by = cls]
-cc[, frac := N / sum(N)]
-CCOL <- c("Direct target" = HP$tier2, "Direct, secondary MOA" = HP$tier3,
-          "Indirect / pathway-adjacent" = HP$archive,
-          "Endogenous ligand" = HP$state, "Likely misannotation" = HP$confounded)
-## wrap the two long class names: unwrapped they consumed most of the panel and
-## pushed the value labels past the right-hand edge, which clipped them.
-cc[, clab := gsub(" / ", " /\n", as.character(cls))]
-cc[, clab := gsub(", ", ",\n", clab)]
-cc[, clab := factor(clab, levels = clab[order(N)])]
-pc <- ggplot(cc, aes(N, clab, fill = cls)) +
-  geom_col(width = 0.6) +
-  ## labels sit on the real scale; white-on-fill is unreadable at these widths,
-  ## so they stay dark and the axis reserves room via the expansion below
-  geom_text(aes(label = sprintf("%d (%.0f%%)", N, frac * 100)), hjust = -0.10,
-            size = PT(6.6), colour = HP$ink) +
-  scale_fill_manual(values = CCOL, guide = "none") +
-  scale_x_continuous(expand = expansion(mult = c(0, 0.42))) +
-  ## title wrapped and axis label shortened: this panel is only ~130 pt wide and
-  ## the single-line versions ran off the right-hand page edge
-  labs(x = "Gene-drug pairs (n = 36)", y = NULL,
-       title = "Machine first-pass\ncompound curation") +
-  theme_hp() +
-  theme(axis.text.y = element_text(size = 7.0, lineheight = 1.05),
-        plot.margin = margin(5.5, 3, 5.5, 2))
-
 ## ------------------------------------------------------------------- compose
-## a used to run the full height of the figure for a scatter whose own data
-## ranges are only about 1:2, which left a tall, half-empty left column. Panels
-## a and c now share the top row (a scatter left, the five audit bars right) and
-## the two-category stacked bar in b runs along the bottom, where its natural
-## shape is wide and short. Tags are given explicitly because the reading order
-## is a, c, b.
-## widths belong to the inner one-row patchwork: on the outer (pa|pc)/pb the
-## layout has a single column and an outer widths vector would be ignored.
-top <- (pa | pc) + plot_layout(widths = c(1.0, 1.05))
-fig <- top / pb +
-  plot_layout(heights = c(0.63, 0.37)) +
-  plot_annotation(tag_levels = list(c("A", "C", "B"))) &
+fig <- pa / pb +
+  plot_layout(heights = c(0.62, 0.38)) +
+  plot_annotation(tag_levels = c("A", "B")) &
   theme(plot.tag = element_text(size = TAG_PT, face = "bold"))
 
 save_pub(fig, "fig6_tractability", 183, 118)
