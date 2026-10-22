@@ -60,7 +60,7 @@ def main() -> None:
             contents.append(
                 [
                     entry["id"],
-                    "Zenodo data archive: 10.5281/zenodo.23357807",
+                    "Zenodo data archive: 10.5281/zenodo.23550165",
                     entry["caption"],
                     entry["rows"],
                     entry["cols"],
@@ -94,7 +94,7 @@ def main() -> None:
             "This workbook contains the manageable supplementary tables. "
             "The full S5 per-screen call table contains 852,216 rows and is "
             "supplied through the Zenodo data archive "
-            "(DOI 10.5281/zenodo.23357807), because its compressed file exceeds "
+            "(DOI 10.5281/zenodo.23550165), because its compressed file exceeds "
             "the 15 MB initial-submission limit. S5b gives the per-screen summary."
         ],
         [

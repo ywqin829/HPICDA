@@ -38,7 +38,7 @@ environment_lock.txt   pinned environment
 The manuscript's supplementary tables and complete revision analyses are
 archived on Zenodo:
 
-> **Zenodo data archive:** DOI [`10.5281/zenodo.23357807`](https://doi.org/10.5281/zenodo.23357807)
+> **Zenodo data archive:** DOI [`10.5281/zenodo.23550165`](https://doi.org/10.5281/zenodo.23550165)
 
 The archive contains `tables/` — the complete source tables S1–S21b, including
 the full `S5_per_screen_calls.tsv.gz`, plus `TABLES_INDEX.md` and
