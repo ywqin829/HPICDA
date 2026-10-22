@@ -175,7 +175,7 @@ def table_index_story() -> list:
         Paragraph(
             "The complete manageable table set is attached to this PDF as "
             "Supplementary_Tables_S1-S21b.xlsx. The full S5 call table is archived at "
-            "Zenodo DOI 10.5281/zenodo.23357807 because its compressed file exceeds the "
+            "Zenodo DOI 10.5281/zenodo.23550165 because its compressed file exceeds the "
             "15 MB initial-submission limit. S5b is the per-screen summary.",
             STYLES["ArialBody"],
         ),
