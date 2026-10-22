@@ -17,14 +17,14 @@ MANUSCRIPT = V2_DIR / "HPICDA_manuscript_v2.md"
 
 
 TITLE = (
-    "# Frozen validation of a pulmonary infection CRISPR atlas shows limited "
-    "cross-screen reproducibility and non-transferable composite weighting"
+    "# A pre-registered benchmark of a pulmonary infection CRISPR atlas reveals "
+    "limited cross-screen reproducibility and non-transferable composite weighting"
 )
-RUNNING_TITLE = "**Running title:** Limited CRISPR atlas reproducibility"
+RUNNING_TITLE = "**Running title:** Pre-registered CRISPR atlas benchmark"
 
-ABSTRACT = """Genome-wide perturbation screens of host–pathogen interactions have proliferated, but their reproducibility is rarely tested under pre-fixed rules. We assembled 39 analysable CRISPR infection screens covering SARS-CoV-2, influenza A, RSV, *M. tuberculosis*/BCG and *P. aeruginosa* into the Human Pulmonary Infection Conditional Dependency Atlas (HPICDA): 852,216 gene × screen records reconciled under an estimand-aware scheme that separates conditional dependency—defined against each gene's own baseline cell fitness—from baseline-fitness confounding and signal-state alteration, yielding a frozen 353-candidate set adjudicated against screens not used for discovery. Same-pathogen validation was weak: 55 of 654 evaluable gene × holdout pairs passed (8.4%). The frozen HG3 composite was at chance on the pre-registered gene-level outcome (AUROC 0.524, 95% CI 0.434–0.617). A top-10 pair-level signal was present (36.0% versus 7.3%), but equal-opportunity resampling gave a wide uncertainty interval. An unweighted pathogen count initially reached AUROC 0.686, but pathogen breadth was strongly associated with the number of holdout opportunities. In 5,000 equal-opportunity resamples selecting one pair per gene, pathogen count did not robustly exceed HG3 (difference +0.072, 95% interval −0.055 to +0.194), whereas the number of independent discovery units hit did (+0.108, +0.004 to +0.207). Cellular context could not be separated from holdout identity and is therefore exploratory. Three archetypes span what a recurrent hit can represent: a robust anchor (ACE2), a context-dependent module (heparan-sulfate biosynthesis) and a mechanistically real but largely baseline-essential module (V-ATPase). We release the call table, frozen set and adjudication as a Pareto-front resource rather than a precise target ranking."""
+ABSTRACT = """CRISPR host–pathogen screens have proliferated, but candidate rankings are rarely benchmarked under pre-fixed rules. We present a pre-registered benchmark using 39 CRISPR infection screens covering SARS-CoV-2, influenza A, RSV, *M. tuberculosis*/BCG and *P. aeruginosa*. We assembled the Human Pulmonary Infection Conditional Dependency Atlas (HPICDA), comprising 852,216 gene × screen records reconciled under an estimand-aware scheme that separates conditional dependency, defined against each gene's own baseline cell fitness, from baseline-fitness confounding and signal-state alteration, and froze 353 candidates before adjudication against unused screens. Same-pathogen validation was weak: 55 of 654 evaluable gene × holdout pairs passed (8.4%). The HG3 composite was at chance on the pre-registered gene-level outcome (AUROC 0.524, 95% CI 0.434–0.617). A top-10 pair-level signal was present (36.0% versus 7.3%), but equal-opportunity resampling gave a wide uncertainty interval. Pathogen count initially reached AUROC 0.686, but breadth was strongly associated with the number of holdout opportunities. In 5,000 equal-opportunity resamples, pathogen count did not robustly exceed HG3 (difference +0.072, 95% interval −0.055 to +0.194), whereas independent discovery units hit did (+0.108, +0.004 to +0.207). Cellular context remained inseparable from holdout identity and is exploratory. Three archetypes span recurrent-hit meanings: a robust anchor (ACE2), a context-dependent module (heparan-sulfate biosynthesis) and a mechanistically real but largely baseline-essential module (V-ATPase). We release the call table, frozen set and adjudication as a benchmark and Pareto-front resource rather than a precise target ranking."""
 
-IMPORTANCE = """Genome-wide CRISPR screens are now routine in respiratory infection research, but weighted rankings of host dependencies are rarely tested against independent studies. We froze 353 candidates from 39 pulmonary infection screens before validation. The same-pathogen replication rate was 8.4%, and the frozen composite score was globally uninformative. A simple pathogen count appeared superior, but this advantage largely reflected how many validation opportunities each gene received. After giving every gene one holdout opportunity, a count of independent discovery units, rather than pathogen breadth, retained predictive value. The results support reporting candidate evidence as a membership set rather than as a precisely transferable ranking."""
+IMPORTANCE = """Genome-wide CRISPR screens are now routine in respiratory infection research, but weighted rankings of host dependencies are rarely benchmarked against independent studies. We froze 353 candidates from 39 pulmonary infection screens and evaluated their transferability under pre-registered rules. The same-pathogen replication rate was 8.4%, and the frozen composite score was globally uninformative. A simple pathogen count appeared superior, but this advantage largely reflected how many validation opportunities each gene received. After giving every gene one holdout opportunity, a count of independent discovery units, rather than pathogen breadth, retained predictive value. The benchmark supports reporting candidate evidence as a membership set rather than as a precisely transferable ranking."""
 
 INTRODUCTION_RESULTS = """Three results answer those questions, and two of them are negative. First, reproducibility is low even under favourable conditions: across 654 pre-registered gene × holdout pairs the same-pathogen PASS rate is 8.4%, so most individual calls do not reproduce. Second, the HG3 composite that ranks the candidate set is at chance as a global predictor of independent validation (AUROC 0.524), although its top ranks are enriched. The apparent superiority of a simple pathogen count is not retained after equalizing the number of validation opportunities; the simple feature that survives is the count or frequency of independent discovery units hit. Third, cellular context may contribute to heterogeneity, but it cannot be separated from holdout identity in this design and is therefore reported as exploratory rather than as a determinant of replication."""
 
@@ -69,6 +69,21 @@ NEW_METHOD_PARAGRAPH = """Because the original gene-level endpoint (validation i
 NEW_CONTEXT_METHOD = """The comparison between cellular context, intervention direction and the composite score is reported in **Supplementary Table S20**. Context exposure is defined per gene as the fraction of its evaluable same-pathogen pairs whose holdout matched the discovery cellular context, computed once over all pairs and once over the frozen pairs only. Pair-level effects were estimated by logistic regression of the PASS indicator on the context flag, intervention direction and Bio-Tier 2 status, marginally and with holdout fixed effects; the fixed-effect fit excludes HO-V-IAV-02, where separation occurs. Because context is constant within four of five frozen holdouts, the marginal and fixed-effect context estimates are exploratory rather than design-identified. Direction was coded preserve/activate versus inhibit. Both layers are reported separately."""
 
 NEW_FIG7 = """**Figure 7 | Holdout adjudication and opportunity-balanced benchmarking.** (**a**) Pre-registered holdout PASS rate by stratum; the dashed line marks the overall rate. (**b**) Top-*K* enrichment of holdout PASS at the pair level (top 10: 9 of 25 pairs, 36%). The top-rank signal is limited and imprecise after opportunity-balanced resampling. (**c**) AUROC of the HG3 composite score against naive consensus features, at the gene level over 333 evaluable candidates, computed separately on the frozen pre-registered outcome and on the SC2-03-inclusive outcome; bars are the frozen pre-registered layer and the hollow marker is the SC2-03-inclusive layer (**Supplementary Table S19f**). (**d**) Equal-opportunity sensitivity for the frozen outcome: one same-pathogen pair was sampled per gene in each of 5,000 replicates. Points and intervals show the median paired AUROC difference from HG3. The apparent pathogen-breadth advantage was not robust (difference +0.072, 95% interval −0.055 to +0.194), whereas independent-unit breadth and hit frequency retained a positive advantage (**Supplementary Tables S21a and S21b**)."""
+
+NEW_DRUG_RESULT = """We then performed a machine first-pass curation of the drug annotations themselves (**Fig. 6c**, Supplementary Table S15). Of 36 gene–drug pairs spanning 20 genes, 11 were classified as acting on the intended target, 8 as direct but secondary, 10 as indirect or pathway-adjacent, 2 as endogenous ligands rather than drugs, and 5 as likely misannotations. These classifications are provisional pending source-level review by a named curator. The clearest probable misannotation is instructive: ACE2 is annotated in several resources with ACE inhibitors such as lisinopril, which act on the homologous enzyme ACE (ACE1) and do not inhibit ACE2. We report this because the mapping error is common and because it is exactly the kind of pharmacological prior that a biological-before-drug firewall is meant to keep out of discovery. On the tolerability axis (**Supplementary Table S16**), 237 of 332 evaluable candidates carry a human-intolerance flag under a deliberately permissive definition; this axis is used for triage only and never to exclude a candidate."""
+
+NEW_DEPMAP_METHOD = """Baseline fitness was taken from the DepMap Public 26Q1 Chronos gene-effect matrix (Figshare DOI 10.6084/m9.figshare.31660582.v2) computed across the pulmonary cell-line panel (A-549, Calu-3, HEp-2, Huh-7.5, Huh-7.5.1, and the wider reference panel), Supplementary Table S4. Because a complete 26Q1 Figshare bundle was unavailable when the baseline data were frozen, model annotations and the common-essential list came from DepMap 24Q4 Public (DOI 10.25452/figshare.plus.27993248.v1); the gene-effect matrix is 26Q1 Chronos, and schema compatibility and file hashes are recorded in Supplementary Table S4. Chronos is a cell-population-dynamics model of CRISPR fitness effects [PMID 34930405]; DepMap dependency resources are described in [PMID 28753430, PMID 29083409]."""
+
+NEW_TRACTABILITY_METHOD = """Author-reported launched and clinical-stage compounds were unlocked only after the freeze. Tractability was obtained directly from the Open Targets Platform 26.06 GraphQL API, the release current on 2026-09-03 [PMID 39657122]. Launched and clinical-stage compounds, phase and mechanism annotations were obtained from the Broad Drug Repurposing Hub snapshot used on 2026-09-03 [PMID 28388612]. ChEMBL records [PMID 37933841] and Orphanet annotations [PMID 31527858] reached this analysis only through Open Targets and were not separately queried. Genetics annotation used gnomAD LOEUF [PMID 32461654], Genebass [PMID 36778668] and the Human Protein Atlas. All "launched drug" mappings were produced by a machine first-pass curation and are reported as provisional until a named curator completes source-level review of all 36 pairs; Supplementary Table S15 records the first-pass classifications and flags."""
+
+NEW_FIG6 = """**Figure 6 | Baseline-fitness liability and tractability.** (**a**) Baseline cellular-fitness liability landscape for the 343 frozen candidates with a DepMap minimum baseline Chronos score: minimum baseline Chronos against HG3 total score, coloured by biological tier, with selected genes labelled. The dashed line marks the essentiality threshold (−0.5); candidates to its right are non-essential in the cell-line panel and therefore lower-liability, which is not the same as a demonstrated therapeutic window. (**b**) Open Targets tractability class by intervention direction. (**c**) Machine first-pass curation of launched/clinical-stage compound annotations; these provisional classifications require source-level review by a named curator."""
+
+REFERENCE_ADDITIONS = """24. DepMap Broad Institute. Chronos parameters (Public 26Q1), version 2. *figshare* 2026. DOI: 10.6084/m9.figshare.31660582.v2
+25. DepMap Broad Institute. DepMap 24Q4 Public. *figshare+* 2024. DOI: 10.25452/figshare.plus.27993248.v1
+26. Buniello A, Suveges D, Cruz-Castillo C, et al. Open Targets Platform: facilitating therapeutic hypotheses building in drug discovery. *Nucleic Acids Res* 2025. PMID: 39657122. DOI: 10.1093/nar/gkae1128
+27. Zdrazil B, Felix E, Hunter F, et al. The ChEMBL Database in 2023: a drug discovery platform spanning multiple bioactivity data types and time periods. *Nucleic Acids Res* 2024. PMID: 37933841. DOI: 10.1093/nar/gkad1004
+28. Corsello SM, Bittker JA, Liu Z, et al. The Drug Repurposing Hub: a next-generation drug library and information resource. *Nat Med* 2017. PMID: 28388612. DOI: 10.1038/nm.4306
+29. Nguengang Wakap S, Lambert DM, Olry A, et al. Estimating cumulative point prevalence of rare diseases: analysis of the Orphanet database. *Eur J Hum Genet* 2020. PMID: 31527858. DOI: 10.1038/s41431-019-0508-0"""
 
 
 def replace_paragraph(text: str, prefix: str, replacement: str) -> str:
@@ -217,6 +232,31 @@ def main() -> None:
         "The comparison between cellular context, intervention direction and the composite score",
         NEW_CONTEXT_METHOD,
     )
+    text = replace_paragraph(
+        text,
+        "We then audited the drug annotations themselves",
+        NEW_DRUG_RESULT,
+    )
+    text = replace_paragraph(
+        text,
+        "Baseline fitness was taken from DepMap 26Q1",
+        NEW_DEPMAP_METHOD,
+    )
+    text = replace_paragraph(
+        text,
+        "Author-reported launched and clinical-stage compounds",
+        NEW_TRACTABILITY_METHOD,
+    )
+    text = replace_paragraph(
+        text,
+        "**Figure 6 | Baseline-fitness liability and tractability.**",
+        NEW_FIG6,
+    )
+    reference_23 = (
+        "23. Gillespie M, Jassal B, Stephan R, et al. The Reactome pathway "
+        "knowledgebase 2022. *Nucleic Acids Res* 2022. PMID: 34788843"
+    )
+    text = replace_once(text, reference_23, reference_23 + "\n" + REFERENCE_ADDITIONS)
     text = replace_once(
         text,
         "all supplementary tables S1–S20b",

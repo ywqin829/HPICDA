@@ -1,6 +1,5 @@
 # Figure 6 — Host-directed tractability and baseline-fitness liability
-## Shared figure theme (defines ROOT, the warm palette, PT() and save_pub()).
-## Run from the repository root, or set HPICDA_ROOT first (see README).
+## Shared theme defines ROOT, the warm palette, PT() and save_pub().
 source("R/hpicda_theme.R")
 
 ax <- fread(file.path(ROOT, "21_stage14_druggability/stage14_druggability_axis.tsv"))
@@ -69,7 +68,7 @@ pb <- ggplot(pb_dt, aes(N, dir, fill = dcls)) +
   ## the panel edge (which reads as a clipped bar)
   scale_x_continuous(expand = expansion(mult = c(0, 0.025))) +
   labs(x = "Frozen candidates", y = NULL,
-       title = "Tractability annotation (Orphanet / ChEMBL / OpenTargets)") +
+       title = "Open Targets tractability") +
   theme_hp() +
   theme(axis.text.y = element_text(size = 7.2),
         legend.position = "bottom", legend.key.size = unit(3.0, "mm"),
@@ -104,7 +103,7 @@ pc <- ggplot(cc, aes(N, clab, fill = cls)) +
   ## title wrapped and axis label shortened: this panel is only ~130 pt wide and
   ## the single-line versions ran off the right-hand page edge
   labs(x = "Gene-drug pairs (n = 36)", y = NULL,
-       title = "Human audit of\n\"launched drug\" annotations") +
+       title = "Machine first-pass\ncompound curation") +
   theme_hp() +
   theme(axis.text.y = element_text(size = 7.0, lineheight = 1.05),
         plot.margin = margin(5.5, 3, 5.5, 2))

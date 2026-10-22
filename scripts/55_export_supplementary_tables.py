@@ -15,17 +15,17 @@ artifacts.
 """
 from __future__ import annotations
 
-import os
-
 import csv
 import gzip
 import hashlib
 import json
+import os
 import shutil
 from pathlib import Path
 
-ROOT = Path(os.environ.get(
-    "HPICDA_ROOT", Path(__file__).resolve().parents[1]))
+ROOT = Path(
+    os.environ.get("HPICDA_ROOT", Path(__file__).resolve().parents[1])
+).resolve()
 OUT = ROOT / "25_manuscript_package" / "tables"
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -92,10 +92,10 @@ TABLES = [
      "Pre-registered holdout screens and their independence rationale.",
      ["09_candidate_freeze/holdout_manifest_v2.tsv"]),
     ("S14", "S14_pharmacology",
-     "Tractability annotation per candidate (ChEMBL/OpenTargets-derived fields).",
+     "Open Targets-derived tractability annotation per candidate.",
      ["21_stage14_druggability/stage14_druggability_axis.tsv"]),
     ("S15", "S15_launched_curation",
-     "Human audit of launched / clinical-stage compounds mapped to candidates.",
+     "Machine first-pass curation of launched / clinical-stage compounds mapped to candidates; classifications remain provisional pending source-level human review.",
      ["21_stage14_druggability/stage14_launched_curation.tsv"]),
     ("S16", "S16_safety_tolerability",
      "Human tolerability axis (LOEUF, pLI, Genebass, HPA) per candidate.",
