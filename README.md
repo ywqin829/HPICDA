@@ -27,7 +27,8 @@ distributed separately (see below).
 ## Repository contents
 
 ```
-scripts/       analysis pipeline, 01–64 (Python, plus 2 R QC/overlay scripts)
+scripts/       analysis pipeline, 01–64 plus the revision audit script 66
+docs/          post-hoc module-specificity audit and decision record
 R/             publication figure scripts (7 figures + shared theme)
 runner/        checkpoint / pipeline driver (run_pipeline.py, PIPELINE_INDEX.yaml)
 environment_lock.txt   pinned environment
@@ -89,6 +90,12 @@ The revision-stage analysis and packaging scripts are
 `scripts/61_opportunity_balanced_benchmark.py` through
 `scripts/64_build_combined_submission_pdf.py`. They use the same
 `HPICDA_ROOT` convention as the rest of the pipeline.
+
+`scripts/66_reaudit_module_holdout_specificity.py` records why the proposed
+module-by-holdout specificity atlas was not added to the manuscript. The
+original proposal counted non-evaluable cross-pathogen rows in its denominator;
+the corrected within-holdout analysis does not survive multiplicity
+correction.
 
 Figure scripts write PDFs to `25_manuscript_package/figures/`. Run them from the
 repository root (the shared theme is sourced as `R/hpicda_theme.R`).
